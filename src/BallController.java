@@ -37,7 +37,7 @@ public class BallController extends Applet implements Runnable{
 	private Graphics dbg;
 	
 	public void init(){
-		setSize(1000,1000);
+		setSize(400,400);
 		c = new Cursor (Cursor.CROSSHAIR_CURSOR);
 		this.setCursor(c);
 		
