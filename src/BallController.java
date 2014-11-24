@@ -10,17 +10,17 @@ import java.awt.Image;
 //hi
 
 
-public class BallController extends Applet {
+public class BallController extends Applet implements Runnable{
 	
 	//Declare variables
-	int speed;
+	private int speed;
 	
 	boolean isStopped = true;
 	
 	//Declare objects
 	private BallModel player;
-	BallView redball;
-	BallView blueball;	
+	private BallView redball;
+	private BallView blueball;	
 	
 	Thread th;
 	
@@ -35,8 +35,8 @@ public class BallController extends Applet {
 	//Set up cursor
 	Cursor c;	//cursor variable	
 	
-	Image dbImage;
-	Graphics dbg;
+	private Image dbImage;
+	private Graphics dbg;
 	
 	public void init(){
 		setSize(400,400);
@@ -115,14 +115,6 @@ public class BallController extends Applet {
 		return true;
 	}
 	
-	
-	//here down must be in view
-	
-	
-	
-	
-	
-	/*
 	public void run(){
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		
@@ -214,7 +206,7 @@ public class BallController extends Applet {
 		paint (dbg);
 		
 		g.drawImage (dbImage, 0, 0, this);
-	}*/
+	}
 	
 	
 }
