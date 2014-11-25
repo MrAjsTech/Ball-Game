@@ -7,25 +7,27 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 
-
+//hi
 
 
 public class BallView extends Applet implements Runnable{
 	
 	//Declare variables
+	private int speed;
 	
+	boolean isStopped = true;
 	
+	//Declare objects
 	
-	BallController redball, blueball;
-	AudioClip shotnoise;
-	AudioClip hitnoise;
-	AudioClip outnoise;
-		
+	private BallController redball;
+	private BallController blueball;	
 	
 	Thread th;
 	
 	//Audio Clips
-	
+	AudioClip shotnoise;
+	AudioClip hitnoise;
+	AudioClip outnoise;
 	
 	//new Font
 	Font f = new Font("Serif", Font.BOLD, 20);
@@ -41,6 +43,22 @@ public class BallView extends Applet implements Runnable{
 		c = new Cursor (Cursor.CROSSHAIR_CURSOR);
 		this.setCursor(c);
 		
+		Color superblue = new Color (0, 0, 255);
+		
+		setBackground(Color.black);
+		
+		setFont(f);
+		
+		//set speed of applet
+		
+		if (getParameter ("speed") != null)
+		{
+			speed = Integer.parseInt(getParameter("speed"));
+		}
+		else speed = 15;
+		
+		//preload audio files
+		
 		hitnoise = getAudioClip (getCodeBase(), "gun.au");
 		hitnoise.play();
 		hitnoise.stop();
@@ -51,23 +69,10 @@ public class BallView extends Applet implements Runnable{
 		outnoise.play();
 		outnoise.stop();
 		
-		Color superblue = new Color (0, 0, 255);
-		redball = new BallController (10, 190, 250, 1, -1, 4, Color.red, outnoise, BallController.player);
-		blueball = new BallController (10, 190, 150, 1, 1, 3, Color.blue, outnoise, BallController.player);
-		setBackground(Color.black);
+		//initialize game objects
 		
-		setFont(f);
-		
-		if (getParameter ("speed") != null)
-		{
-			redball.speed = Integer.parseInt(getParameter("speed"));
-			blueball.speed = Integer.parseInt(getParameter("speed"));
-		}
-		else {
-			redball.speed= 15;
-			blueball.speed = 15;
-		}
-		
+		redball = new BallController (10, 190, 250, 1, -1, 4, Color.red, outnoise, BallController.playerscore);
+		blueball = new BallController (10, 190, 150, 1, 1, 3, Color.blue, outnoise, BallController.playerscore);
 		
 					
 	}
@@ -81,71 +86,9 @@ public class BallView extends Applet implements Runnable{
 		th.stop();
 	}
 	
-	
-	
-	public void run(){
-		//where this code gets moved... it needs to be called on runtime
-		redball.runThread();
-		blueball.runThread();
+	public boolean mouseDown(Event e, int x, int y){
 		
-	}
-	
-	public void paint (Graphics g){
-		//go back to controller make new method and call here
-		//begin boolean method
-		if (redball.paint()==true&&blueball.paint()==true) {
-			g.setColor(Color.yellow);
-			//display standings
-			g.drawString("Score: " + redball.player.getScore(), 10, 40);
-			g.drawString("Lives: " + redball.player.getLives(), 300, 40);
-			
-			//draw the balls
-			redball.drawBall(g);
-			blueball.drawBall(g);
-			
-			if (redball.isStopped&&blueball.isStopped)
-			{
-				g.setColor (Color.yellow);
-				g.drawString("Double-click on Applet to start game.", 40, 200);
-			}
-		}
-		
-		else if (redball.paint()==false&&blueball.paint()==false) {
-			g.setColor(Color.yellow);
-			
-			//points and game over
-			g.drawString("Game Over!", 130, 100);
-			g.drawString("You scored " + redball.player.getScore() + " Points!", 90, 140);
-			
-			//Assessment of points
-			if (redball.player.getScore() < 300) g.drawString ("Beginner", 100, 190);
-			else if (redball.player.getScore() < 600 && redball.player.getScore() >= 300 ) 
-				g.drawString ("Amature", 100, 190);
-			else if (redball.player.getScore() < 900 && redball.player.getScore() >= 600 ) 
-				g.drawString ("Good", 100, 190);
-			else if (redball.player.getScore() < 1200 && redball.player.getScore() >= 900 ) 
-				g.drawString ("Excellent", 100, 190);
-			else if (redball.player.getScore() < 1500 && redball.player.getScore() >= 1200 ) 
-				g.drawString ("Champion", 100, 190);
-			else if (redball.player.getScore() >= 1500) 
-				g.drawString ("Too good for game", 100, 190);
-			g.drawString ("Double-click on the Applet to play again", 20, 220);
-			redball.isStopped = true;
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	}
-	
-public boolean mouseDown(Event e, int x, int y){
-		
-		if (!redball.isStopped)
+		if (!isStopped)
 		{
 			if (redball.userHit(x,y))
 			{
@@ -163,13 +106,89 @@ public boolean mouseDown(Event e, int x, int y){
 			}
 		}
 		
-		else if (redball.isStopped && e.clickCount == 2)
+		else if (isStopped && e.clickCount == 2)
 		{
-			redball.isStopped = false;
+			isStopped = false;
 			init();
 		}
 		
 		return true;
+	}
+	
+	public void run(){
+		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+		
+		while (true)
+		{
+			
+			if (BallController.playerscore.getLives() >= 0 && !isStopped)
+			{
+				redball.move();
+				blueball.move();
+			}
+			
+			repaint();
+			
+			try
+			{
+				Thread.sleep (speed);
+			}
+			catch (InterruptedException ex)
+			{
+				//do nothing
+			}
+			
+		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+		}
+	}
+	
+	public void paint (Graphics g){
+		//if lives still remain
+		if (BallController.playerscore.getLives() >=0)
+		{	//set the background color
+			g.setColor(Color.yellow);
+			//display standings
+			g.drawString("Score: " + BallController.playerscore.getScore(), 10, 40);
+			g.drawString("Lives: " + BallController.playerscore.getLives(), 300, 40);
+			
+			//draw the balls
+			redball.drawBall(g);
+			blueball.drawBall(g);
+			
+			if (isStopped)
+			{
+				g.setColor (Color.yellow);
+				g.drawString("Double-click on Applet to start game.", 40, 200);
+			}
+		}
+		
+		else if (BallController.playerscore.getLives() < 0)
+		{
+			g.setColor(Color.yellow);
+			
+			//points and game over
+			g.drawString("Game Over!", 130, 100);
+			g.drawString("You scored " + BallController.playerscore.getScore() + " Points!", 90, 140);
+			
+			//Assessment of points
+			if (BallController.playerscore.getScore() < 300) g.drawString ("You got no swag", 100, 190);
+			else if (BallController.playerscore.getScore() < 600 && BallController.playerscore.getScore() >= 300 ) 
+				g.drawString ("Do better! No swag", 100, 190);
+			else if (BallController.playerscore.getScore() < 900 && BallController.playerscore.getScore() >= 600 ) 
+				g.drawString ("Almost swag", 100, 190);
+			else if (BallController.playerscore.getScore() < 1200 && BallController.playerscore.getScore() >= 900 ) 
+				g.drawString ("Beast status", 100, 190);
+			else if (BallController.playerscore.getScore() < 1500 && BallController.playerscore.getScore() >= 1200 ) 
+				g.drawString ("Champ status achieved", 100, 190);
+			else if (BallController.playerscore.getScore() >= 1500) 
+				g.drawString ("Major swag status achieved", 100, 190);
+			g.drawString ("Double-click on the Applet to play again", 20, 220);
+			isStopped = true;
+		}
+		
+		
+		
+		
 	}
 	
 	public void update (Graphics g){

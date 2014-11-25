@@ -1,7 +1,5 @@
-import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Color;
-import java.awt.Event;
 import java.awt.Graphics;
 import java.util.Random;
 
@@ -12,36 +10,28 @@ public class BallController {
 	private int x_speed;
 	private int y_speed;
 	private int radius;
-	public static BallModel player;
-
+	
 	private int first_x;
 	private int first_y;
-	boolean isStopped = true;
+	
 	private int maxspeed;
-	BallView view;
+	
 	private final int x_leftout = 10;
 	private final int x_rightout = 370;
 	private final int y_upout = 45;
 	private final int y_downout = 370;
 	
-	public static int speed;
-	
-	
-	
 	Color color;
 	
 	AudioClip out;
 	
-	
+	public static BallModel player;
+	public static BallModel playerscore = new BallModel();
 	
 	Random rnd = new Random();
 	
 	public BallController (int radius, int x, int y, int vx, int vy, int ms, Color color, AudioClip out, BallModel player)
 	{
-		view = new BallView();
-		player = new BallModel();
-		//make balls in view
-		
 		this.radius = radius;
 		pos_x = x;
 		pos_y = y;
@@ -54,13 +44,8 @@ public class BallController {
 		this.out = out;
 		this.player = player;
 		
-		
-		
-		
 	}
 	
-
-
 	public void move()
 	{
 		pos_x += x_speed;
@@ -152,54 +137,4 @@ public class BallController {
 		g.setColor(color);
 		g.fillOval(pos_x - radius, pos_y - radius, 2*radius, 2*radius);
 	}
-
-
-public void runThread() {
-	
-	Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-	
-	while (true)
-	{
-
-		
-		if (player.getLives() >= 0 && !isStopped)
-		{
-			view.redball.move();
-			view.blueball.move();
-		}
-		
-		view.repaint();
-		
-		try
-		{
-			Thread.sleep (speed);
-		}
-		catch (InterruptedException ex)
-		{
-			//do nothing
-		}
-		
-	Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-	
-	}
-}
-
-			public boolean paint() {
-				//if lives still remain
-				boolean check = false;
-			if (player.getLives() >=0)
-			{	//set the background color
-				check=true;
-			}
-			
-			else if (player.getLives() < 0)
-			{
-					check=false;
-				
-			}
-			return check;
-			
-			
-			
-}
 }
