@@ -59,13 +59,13 @@ public class BallView extends Applet implements Runnable{
 		
 		//preload audio files
 		
-		hitnoise = getAudioClip (getCodeBase(), "gun.au");
+		hitnoise = getAudioClip (getCodeBase(), "src/gun.au");
 		hitnoise.play();
 		hitnoise.stop();
-		shotnoise = getAudioClip (getCodeBase(), "miss.au");
+		shotnoise = getAudioClip (getCodeBase(), "src/miss.au");
 		shotnoise.play();
 		shotnoise.stop();
-		outnoise = getAudioClip (getCodeBase(), "error.au");
+		outnoise = getAudioClip (getCodeBase(), "src/error.au");
 		outnoise.play();
 		outnoise.stop();
 		
