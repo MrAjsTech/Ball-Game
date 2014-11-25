@@ -2,11 +2,10 @@ Ball-Game
 =========
 Project for class....
 
-Need:
-1. Convert MVC 
+
+1. Convert MVC-DONE
 2. Create Java Docs
-3. Add difficulty: (Easy, Medium, and Hard)- change thread speed based on selection 
-4. Add sounds back in. 
+3. Add sounds back in. (working but need to figure out local path)
 
 
 
